@@ -1,25 +1,30 @@
 from fastapi import APIRouter, HTTPException
-from db import db
-from models import LoginRequest, UsuarioInfo
+from database import cuentas_usuario_collection, usuarios_collection
+from models import UserLogin, UserInfo
 
-router = APIRouter()
+router = APIRouter(prefix="/auth", tags=["Authentication"])
 
-@router.post("/login", response_model=UsuarioInfo)
-def login_user(login: LoginRequest):
-    cuentas_usuario = db["cuentas_usuario"]
-    usuarios = db["usuarios"]
-
-    cuenta = cuentas_usuario.find_one({
-        "correo": login.correo,
-        "contrasena": login.contrasena
+@router.post("/login")
+async def login(user: UserLogin):
+    # Verificar credenciales
+    cuenta_existente = cuentas_usuario_collection.find_one({
+        "correo": user.correo,
+        "contrasena": user.contrasena
     })
-
-    if not cuenta:
+    
+    if not cuenta_existente:
         raise HTTPException(status_code=401, detail="Correo o contraseña incorrectos")
-
-    usuario = usuarios.find_one({"nombre": cuenta["nombre"]})
-
-    if not usuario:
-        raise HTTPException(status_code=404, detail="No se encontró el usuario")
-
-    return UsuarioInfo(nombre=cuenta["nombre"], posicion=usuario["posicion"])
+    
+    # Obtener información adicional del usuario
+    usuario_info = usuarios_collection.find_one({
+        "nombre": cuenta_existente["nombre"]
+    })
+    
+    if not usuario_info:
+        raise HTTPException(status_code=404, detail="Información de usuario no encontrada")
+    
+    return {
+        "nombre": usuario_info["nombre"],
+        "posicion": usuario_info["posicion"],
+        "message": "Login exitoso"
+    }
