@@ -23,3 +23,6 @@ app.include_router(auth.router)
 @app.get("/")
 def read_root():
     return {"message": "Bienvenido a BeautyTech API"}
+
+from routes import citas
+app.include_router(citas.router)
