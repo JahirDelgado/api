@@ -7,3 +7,12 @@ class UserLogin(BaseModel):
 class UserInfo(BaseModel):
     nombre: str
     posicion: str
+
+class CitaCreate(BaseModel):
+    name: str
+    service: str
+    professional: str
+    date: str
+    time: str
+    phone: str = "manual"
+    status: str = "manual"
