@@ -119,7 +119,7 @@ async def get_servicio_info(nombre: str):
     return servicio
 
 
-@router.get("/{fecha}")
+@router.get("/")
 async def obtener_citas(
     fecha: str,  # Fecha en formato dd/mm/yyyy desde la ruta
     usuario: str = Query(..., description="Nombre del usuario que solicita las citas"),
