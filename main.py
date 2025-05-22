@@ -27,5 +27,3 @@ def read_root():
     return {"message": "Bienvenido a BeautyTech API"}
 
 app.include_router(citas.router, prefix="/citas", tags=["Citas"])
-
-app.include_router(calendario.router)
