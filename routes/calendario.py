@@ -3,9 +3,8 @@ from typing import List
 from datetime import datetime
 from pydantic import BaseModel
 from bson import ObjectId
-
-# Suponiendo que usas Motor o PyMongo y tienes ya la conexión a MongoDB:
-from database import db  # tu función para obtener la conexión a la DB
+from models import CitaResponse
+from database import db
 
 router = APIRouter()
 
@@ -42,7 +41,7 @@ async def obtener_citas(
     citas_cursor = db.citas.find(filtro)
 
     citas = []
-    async for cita in citas_cursor:
+    for cita in citas_cursor:
         # Convertir ObjectId a str
         cita["_id"] = str(cita["_id"])
         citas.append(cita)
