@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import auth, citas, recordatorios
-from usuarios import router as usuarios_router
+from routes import auth, citas, recordatorios, usuarios
 
 app = FastAPI(
     title="BeautyTech API",
@@ -9,22 +8,19 @@ app = FastAPI(
     version="0.1.0"
 )
 
-# Configurar CORS (permite conexiones desde tu app Flet)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # En producción, reemplaza con tu dominio
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Incluir rutas
 app.include_router(auth.router)
+app.include_router(citas.router, prefix="/citas", tags=["Citas"])
+app.include_router(recordatorios.router)
+app.include_router(usuarios.router, prefix="/usuarios", tags=["Usuarios"])
 
 @app.get("/")
 def read_root():
     return {"message": "Bienvenido a BeautyTech API"}
-
-app.include_router(citas.router, prefix="/citas", tags=["Citas"])
-app.include_router(recordatorios.router)
-app.include_router(usuarios_router)
