@@ -15,5 +15,5 @@ class CitaCreate(BaseModel):
     professional: str
     date: str
     time: str
-    phone: str
-    status: str
+    phone: Optional[str] = None
+    status: Optional[str] = "manual"
