@@ -2,6 +2,8 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import List
 from database import db
+from fastapi import Path
+
 
 router = APIRouter(tags=["Insumos"])
 
@@ -26,3 +28,13 @@ def crear_insumo(insumo: Insumo):
         return {"mensaje": "Insumo agregado correctamente"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al insertar insumo: {str(e)}")
+
+@router.delete("/insumos/{nombre}", status_code=200)
+def eliminar_insumo(nombre: str = Path(...)):
+    try:
+        resultado = insumos_collection.delete_one({"nombre": nombre})
+        if resultado.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Insumo no encontrado")
+        return {"mensaje": "Insumo eliminado correctamente"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al eliminar insumo: {str(e)}")
