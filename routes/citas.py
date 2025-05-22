@@ -6,6 +6,7 @@ from database import db
 
 router = APIRouter(prefix="/citas", tags=["Citas"])
 
+
 @router.get("/servicios")
 async def get_servicios(posicion: str, profesional: Optional[str] = None):
     if posicion == "empleado":
@@ -22,14 +23,20 @@ async def get_servicios(posicion: str, profesional: Optional[str] = None):
 
         return [{"nombreServicio": s} for s in servicios]
     else:
-        return list(db.servicios.find({}, {"_id": 0}))
+        # Devuelve todos los servicios únicos en formato [{"nombreServicio": ...}]
+        servicios_raw = db.servicios.find({}, {"_id": 0, "nombreServicio": 1})
+        return list(servicios_raw)
+
 
 @router.get("/profesionales")
 async def get_profesionales(servicio: Optional[str] = None):
-    query = {"posicion": {"$ne": "admin"}}
+    query = {"posicion": "empleado"}
     if servicio:
         query["servicio"] = servicio
-    return list(db.usuarios.find(query, {"_id": 0}))
+
+    profesionales = db.usuarios.find(query, {"_id": 0, "nombre": 1})
+    return [p for p in profesionales]
+
 
 @router.get("/existentes")
 async def get_citas_existentes(fecha: str, profesional: Optional[str] = None):
@@ -42,12 +49,13 @@ async def get_citas_existentes(fecha: str, profesional: Optional[str] = None):
     if profesional:
         query["professional"] = profesional
 
-    return list(db.citas.find(query, {"_id": 0}))
+    citas = db.citas.find(query, {"_id": 0})
+    return list(citas)
+
 
 @router.post("/nueva")
 async def crear_cita(cita: CitaCreate):
     try:
-        # Validación de campos requeridos ya debe hacerse en el modelo Pydantic
         cita_dict = cita.dict()
         cita_dict["createdAt"] = datetime.now()
         db.citas.insert_one(cita_dict)
