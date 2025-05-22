@@ -42,3 +42,32 @@ def actualizar_subinsumo(nombre_usuario: str, insumo: str, nombre: str, datos: A
         return {"mensaje": "Subinsumo actualizado correctamente"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al actualizar subinsumo: {str(e)}")
+
+
+class Subinsumo(BaseModel):
+    insumo: str
+    nombre_usuario: str
+    nombre: str
+    cantidad: int
+    total: float
+    unitario: float
+    minimo: int
+
+# POST - Crear nuevo subinsumo
+@router.post("/subinsumos")
+def crear_subinsumo(subinsumo: Subinsumo):
+    try:
+        existente = subinsumos_collection.find_one({
+            "insumo": subinsumo.insumo,
+            "nombre_usuario": subinsumo.nombre_usuario,
+            "nombre": subinsumo.nombre
+        })
+
+        if existente:
+            raise HTTPException(status_code=400, detail=f"{subinsumo.nombre} ya existe.")
+
+        subinsumos_collection.insert_one(subinsumo.dict())
+        return {"message": "Subinsumo creado con éxito."}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al crear subinsumo: {str(e)}")
