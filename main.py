@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes import auth
+from routes import citas
+from routes import calendario.py
 
 app = FastAPI(
     title="BeautyTech API",
@@ -24,5 +26,6 @@ app.include_router(auth.router)
 def read_root():
     return {"message": "Bienvenido a BeautyTech API"}
 
-from routes import citas
 app.include_router(citas.router, prefix="/citas", tags=["Citas"])
+
+app.include_router(calendario.router)
