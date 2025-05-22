@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import auth, citas, recordatorios
+from routes import auth, citas, recordatorios, usuarios
 
 app = FastAPI(
     title="BeautyTech API",
@@ -26,3 +26,4 @@ def read_root():
 
 app.include_router(citas.router, prefix="/citas", tags=["Citas"])
 app.include_router(recordatorios.router)
+app.include_router(usuarios.router)
