@@ -27,6 +27,6 @@ def read_root():
 
 app.include_router(citas.router, prefix="/citas", tags=["Citas"])
 
-from routes import calendario as calendario_router
+from routes import calendario
 
-app.include_router(calendario_router, prefix="/citas")
+app.include_router(calendario, prefix="/citas")
