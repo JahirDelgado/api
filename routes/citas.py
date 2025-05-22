@@ -12,15 +12,18 @@ async def get_servicios(posicion: str, profesional: Optional[str] = None):
         if not profesional:
             raise HTTPException(status_code=400, detail="Se requiere el nombre del profesional para empleados.")
         
-        profesional_data = db.usuarios.find_one({"nombre": profesional})
-        if not profesional_data:
-            raise HTTPException(status_code=404, detail="Profesional no encontrado.")
+        # Buscar TODOS los documentos del profesional
+        profesional_docs = db.usuarios.find({"nombre": profesional})
+        
+        servicios_set = set()
+        for doc in profesional_docs:
+            servicio = doc.get("servicio")
+            if isinstance(servicio, list):
+                servicios_set.update(servicio)
+            elif isinstance(servicio, str):
+                servicios_set.add(servicio)
 
-        servicios = profesional_data.get("servicio", [])
-        if isinstance(servicios, str):
-            servicios = [servicios]
-
-        return [{"nombreServicio": s} for s in servicios]
+        return [{"nombreServicio": s} for s in servicios_set]
     else:
         servicios_raw = db.servicios.find({}, {"_id": 0, "nombreServicio": 1})
         return list(servicios_raw)
