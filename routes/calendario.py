@@ -24,8 +24,6 @@ async def obtener_citas(
     except ValueError:
         raise HTTPException(status_code=400, detail="Formato de fecha inválido, debe ser dd/mm/yyyy")
 
-    db = get_db()
-
     # Construir filtro para MongoDB
     filtro = {
         "date": fecha,  # o el formato que uses para almacenar fecha en tu BD
