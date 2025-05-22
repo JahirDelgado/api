@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes import auth
 from routes import citas
-from routes import calendario.py
+from routes import calendario
 
 app = FastAPI(
     title="BeautyTech API",
