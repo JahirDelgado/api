@@ -8,7 +8,7 @@ from database import db
 
 router = APIRouter()
 
-@router.get("/citas/{fecha}", response_model=List[CitaResponse])
+@router.get("/{fecha}")
 async def obtener_citas(
     fecha: str,  # Fecha en formato dd/mm/yyyy desde la ruta
     usuario: str = Query(..., description="Nombre del usuario que solicita las citas"),
