@@ -1,11 +1,10 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, EmailStr, Field
-from database import db
+from database import db, cuentas_usuario_collection
 from typing import List
 
 router = APIRouter(tags=["Usuarios"])
 
-usuarios_collection = db["cuentas_usuario"]
 servicios_collection = db["servicios"]
 servicios_asignados_collection = db["usuarios"]
 
@@ -28,11 +27,11 @@ class ServiciosAsignadosUsuario(BaseModel):
 # Ruta POST para crear usuario
 @router.post("/")
 async def crear_usuario(usuario: Usuario):
-    if await usuarios_collection.find_one({"correo": usuario.correo}):
+    if await cuentas_usuario_collection.find_one({"correo": usuario.correo}):
         raise HTTPException(status_code=400, detail="El correo ya está registrado")
-    if await usuarios_collection.find_one({"nombre": usuario.nombre}):
+    if await cuentas_usuario_collection.find_one({"nombre": usuario.nombre}):
         raise HTTPException(status_code=400, detail="El nombre ya está registrado")
-    await usuarios_collection.insert_one(usuario.dict())
+    await cuentas_usuario_collection.insert_one(usuario.dict())
     return {"message": "Usuario registrado exitosamente"}
 
 # Rutas ya existentes para servicios
@@ -46,7 +45,7 @@ async def listar_servicios():
 
 @router.post("/servicios")
 async def guardar_servicios_usuario(data: ServiciosAsignadosUsuario):
-    usuario = await usuarios_collection.find_one({"correo": data.correo})
+    usuario = await cuentas_usuario_collection.find_one({"correo": data.correo})
     if not usuario:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
 
