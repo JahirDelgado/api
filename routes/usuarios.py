@@ -3,7 +3,7 @@ from pydantic import BaseModel, EmailStr, Field
 from database import db
 from typing import List
 
-router = APIRouter(prefix="/usuarios", tags=["Usuarios"])
+router = APIRouter(tags=["Usuarios"])
 
 usuarios_collection = db["cuentas_usuario"]
 servicios_collection = db["servicios"]
