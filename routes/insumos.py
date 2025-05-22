@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 from typing import List
 from database import db
 
@@ -18,3 +18,11 @@ def obtener_insumos(nombre_usuario: str):
         return insumos
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al obtener insumos: {str(e)}")
+
+@router.post("/insumos", status_code=201)
+def crear_insumo(insumo: Insumo):
+    try:
+        insumos_collection.insert_one(insumo.dict())
+        return {"mensaje": "Insumo agregado correctamente"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al insertar insumo: {str(e)}")
