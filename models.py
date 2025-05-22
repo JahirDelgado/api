@@ -13,7 +13,7 @@ class CitaCreate(BaseModel):
     name: str
     service: str
     professional: str
-    date: str  # formato: "dd/mm/yyyy"
-    time: str  # formato: "HH:MM"
-    phone: Optional[str] = "manual"
-    status: str = "manual"
+    date: str
+    time: str
+    phone: str
+    status: str
