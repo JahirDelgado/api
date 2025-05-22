@@ -68,3 +68,11 @@ def guardar_servicios_usuario(data: ServiciosAsignadosUsuario):
             return {"mensaje": "Servicios asignados guardados correctamente"}
 
     raise HTTPException(status_code=500, detail="Error al guardar servicios asignados")
+
+
+@router.post("/servicios/nuevo")
+def crear_servicio(servicio: Servicio):
+    if servicios_collection.find_one({"nombreServicio": servicio.nombreServicio}):
+        raise HTTPException(status_code=400, detail="El servicio ya existe")
+    servicios_collection.insert_one(servicio.dict())
+    return {"mensaje": "Servicio creado exitosamente"}
