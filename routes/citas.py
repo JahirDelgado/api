@@ -23,7 +23,6 @@ async def get_servicios(posicion: str, profesional: Optional[str] = None):
 
         return [{"nombreServicio": s} for s in servicios]
     else:
-        # Devuelve todos los servicios únicos en formato [{"nombreServicio": ...}]
         servicios_raw = db.servicios.find({}, {"_id": 0, "nombreServicio": 1})
         return list(servicios_raw)
 
@@ -34,14 +33,14 @@ async def get_profesionales(servicio: Optional[str] = None):
     if servicio:
         query["servicio"] = servicio
 
-    profesionales = db.usuarios.find(query, {"_id": 0, "nombre": 1})
-    return [p for p in profesionales]
+    profesionales = db.usuarios.find(query, {"_id": 0, "nombre": 1, "servicio": 1})
+    return list(profesionales)
 
 
-@router.get("/existentes")
-async def get_citas_existentes(fecha: str, profesional: Optional[str] = None):
+@router.get("/por-dia")
+async def get_citas_por_dia(fecha: str, profesional: Optional[str] = None):
     try:
-        datetime.strptime(fecha, "%d/%m/%Y")  # Validar formato
+        datetime.strptime(fecha, "%d/%m/%Y")
     except ValueError:
         raise HTTPException(status_code=400, detail="Formato de fecha inválido. Usa dd/mm/yyyy.")
 
@@ -53,7 +52,30 @@ async def get_citas_existentes(fecha: str, profesional: Optional[str] = None):
     return list(citas)
 
 
-@router.post("/nueva")
+@router.post("/verificar-disponibilidad")
+async def verificar_disponibilidad(data: dict):
+    profesional = data.get("profesional")
+    fecha = data.get("fecha")
+    hora = data.get("hora")
+
+    if not profesional or not fecha or not hora:
+        raise HTTPException(status_code=400, detail="Faltan parámetros para verificar disponibilidad.")
+
+    # Checar si ya hay cita para ese profesional, fecha y hora
+    cita_existente = db.citas.find_one({
+        "professional": profesional,
+        "date": fecha,
+        "time": hora,
+        "status": {"$ne": "cancelada"}
+    })
+
+    if cita_existente:
+        raise HTTPException(status_code=400, detail="El horario no está disponible.")
+
+    return {"detail": "Horario disponible."}
+
+
+@router.post("/crear")
 async def crear_cita(cita: CitaCreate):
     try:
         cita_dict = cita.dict()
