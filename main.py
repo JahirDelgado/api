@@ -26,3 +26,4 @@ def read_root():
 
 from routes import citas
 app.include_router(citas.router)
+app.include_router(citas.router, prefix="/citas", tags=["Citas"])
