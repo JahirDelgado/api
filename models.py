@@ -24,3 +24,14 @@ class ServicioInfo(BaseModel):
 # Si quieres validar listas de servicios (por ejemplo, en get_servicios):
 class ServiciosResponse(BaseModel):
     servicios: List[ServicioInfo]
+
+
+class CitaResponse(BaseModel):
+    _id: str
+    date: str
+    time: str
+    service: str
+    status: str
+    name: str
+    phone: str
+    professional: Optional[str] = None
