@@ -4,7 +4,7 @@ from typing import List, Optional
 from models import CitaCreate, ServicioInfo
 from database import db
 
-router = APIRouter(prefix="/citas", tags=["Citas"])
+router = APIRouter(tags=["Citas"])
 
 @router.get("/servicios")
 async def get_servicios(posicion: str, profesional: Optional[str] = None):
