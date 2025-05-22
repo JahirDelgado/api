@@ -25,5 +25,4 @@ def read_root():
     return {"message": "Bienvenido a BeautyTech API"}
 
 from routes import citas
-app.include_router(citas.router)
 app.include_router(citas.router, prefix="/citas", tags=["Citas"])
