@@ -117,3 +117,28 @@ async def get_servicio_info(nombre: str):
     if not servicio:
         raise HTTPException(status_code=404, detail="Servicio no encontrado")
     return servicio
+
+@router.get("/{fecha}")
+async def get_citas_segun_usuario(
+    fecha: str,
+    usuario: str = Query(...),
+    rol: str = Query(...)
+):
+    try:
+        datetime.strptime(fecha, "%d/%m/%Y")
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Formato de fecha inválido. Usa dd/mm/yyyy.")
+
+    query = {"date": fecha, "status": {"$ne": "cancelada"}}
+
+    if rol == "empleado":
+        query["professional"] = usuario
+    # Si es admin, no se filtra por profesional
+
+    citas = db.citas.find(query)
+    resultados = []
+    for cita in citas:
+        cita["_id"] = str(cita["_id"])
+        resultados.append(cita)
+
+    return resultados
