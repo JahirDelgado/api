@@ -29,4 +29,4 @@ app.include_router(citas.router, prefix="/citas", tags=["Citas"])
 
 from routes import calendario
 
-app.include_router(calendario, prefix="/citas")
+app.include_router(calendario.router, prefix="/citas")
