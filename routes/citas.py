@@ -141,7 +141,7 @@ async def obtener_citas(
     }
 
     # Puedes filtrar por profesional (usuario) o rol, según lógica de negocio
-    if rol.lower() == "profesional":
+    if rol.lower() == "empleado":
         filtro["professional"] = usuario
     else:
         # Si el usuario no es profesional, puedes filtrar de otra forma o devolver todas las citas del día
